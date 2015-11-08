@@ -1,5 +1,9 @@
 package com.example.jaron.fwtrailsapp_android_demo;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -13,6 +17,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +43,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
+        locationManager = (LocationManager) this.getSystemService((Context.LOCATION_SERVICE));
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                //Gets called when a new location is found by the network location provider.
+                updateLocation(location);
+            }
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-        // Add a marker in Sydney and move the camera
-        LatLng skyBridge = new LatLng(41, -85);
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+        // Add a marker in Sydney and move the camera41.117405, -85.108335
+        LatLng skyBridge = new LatLng(41.117405, -85.108335);
         mMap.addMarker(new MarkerOptions().position(skyBridge).title("IPFW Skybridge"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(skyBridge));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(19));
+
+    }
+
+    private void updateLocation(Location location)
+    {
+        // Figure out how to move the screen to keep up with the dot in the center.
+        LatLng updatedLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(updatedLocation));
     }
 }
