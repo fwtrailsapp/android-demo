@@ -6,6 +6,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,6 +14,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.kml.KmlLayer;
+
+import java.io.InputStream;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -43,6 +47,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        InputStream is = getResources().openRawResource(R.raw.doc);
+        try {
+            KmlLayer layer = new KmlLayer(mMap, is, getApplicationContext());
+            layer.addLayerToMap();
+//        mMap.addGroundOverlay(R.raw.mkl);
+        }
+        catch(org.xmlpull.v1.XmlPullParserException e){
+            Log.i(null, "catch1");
+        }
+        catch(java.io.IOException e){
+            Log.i(null, "catch2");
+        }
         mMap.setMyLocationEnabled(true);
         locationManager = (LocationManager) this.getSystemService((Context.LOCATION_SERVICE));
         locationListener = new LocationListener() {
