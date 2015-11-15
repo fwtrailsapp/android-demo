@@ -58,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createLocationRequest();
         Log.i(MY_TAG, "buildGoogleApiClient");
     }
-
+    // Does this request a new location service every second?
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
@@ -116,10 +116,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        mMap.addGroundOverlay(R.raw.mkl);
         }
         catch(org.xmlpull.v1.XmlPullParserException e){
-            Log.i(null, "catch1");
+            Log.i(null, "catch1: XML Parser Cannot Parse KML File.\nActual:\t" + e.toString());
         }
         catch(java.io.IOException e){
-            Log.i(null, "catch2");
+            Log.i(null, "catch2:\t" + e.toString());
         }
 
         mMap.setMyLocationEnabled(true);
@@ -135,7 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             public void onProviderDisabled(String provider) {}
         };
-        // Add a marker in Sydney and move the camera41.117405, -85.108335
+        // Add a marker in Walb Student Union Skybridge
         LatLng skyBridge = new LatLng(41.117405, -85.108335);
         mMap.addMarker(new MarkerOptions().position(skyBridge).title("IPFW Skybridge"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(skyBridge));
