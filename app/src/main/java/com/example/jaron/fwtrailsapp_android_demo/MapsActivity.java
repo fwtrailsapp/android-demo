@@ -6,6 +6,7 @@ import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -22,6 +23,7 @@ import com.google.maps.android.kml.KmlLayer;
 import com.google.android.gms.location.LocationListener;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -35,6 +37,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mCurrentLocation;
     private String mLatitudeText, mLongitudeText;
     protected LocationRequest mLocationRequest;
+    private boolean recording = false;
+    private ArrayList<Double> latitudes = new ArrayList<>();
+    private ArrayList<Double> longitudes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,11 +154,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Figure out how to move the screen to keep up with the dot in the center.
         LatLng updatedLocation = new LatLng(location.getLatitude(),location.getLongitude());
         LatLngBounds newLocation = new LatLngBounds(new LatLng(location.getLatitude(), location.getLongitude()), new LatLng(location.getLatitude(), location.getLongitude()));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(newLocation, 5));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(newLocation, 3));
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(updatedLocation));
-        mMap.addMarker(new MarkerOptions().position(updatedLocation).title("New Location"));
+//        mMap.addMarker(new MarkerOptions().position(updatedLocation).title("New Location"));
+        if(recording){
+            mMap.addMarker(new MarkerOptions().position(updatedLocation).title("New Location"));
+            latitudes.add(location.getLatitude());
+            longitudes.add(location.getLongitude());
+            Log.i(MY_TAG, "Latitude: " + location.getLatitude() + " Longitude: " + location.getLongitude());
+        }
         Log.i(MY_TAG, "updateLocation");
-        Log.i(MY_TAG, "Latitude: " + location.getLatitude() + " Longitude: " + location.getLongitude());
+    }
+
+    public void startRecording(View view){
+        recording = true;
+        Log.i(MY_TAG, "startRecording");
+    }
+
+    public void stopRecording(View view){
+        recording  = false;
+        Log.i(MY_TAG, "stopRecording");
+        for(int i = 0; i < latitudes.size(); i++){
+            Log.i(MY_TAG, "\tLat: " + latitudes.get(i) + "\tLong: " + longitudes.get(i));
+        }
     }
 
     public void onConnectionSuspended(int n){
