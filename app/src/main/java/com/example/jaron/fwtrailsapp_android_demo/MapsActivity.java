@@ -23,6 +23,7 @@ import com.google.maps.android.kml.KmlLayer;
 import com.google.android.gms.location.LocationListener;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -82,7 +83,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void startLocationUpdates() {
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                updateLocation(location);
+                if(recording) {
+                    updateLocation(location);
+                }
             }
         };
 
@@ -103,12 +106,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         catch(java.io.IOException e){
             Log.i(null, "catch2:\t" + e.toString());
+        }
 
         line = mMap.addPolyline(new PolylineOptions()
-                .add(new LatLng(51.5, -0.1), new LatLng(40.7, -74.0))
                 .width(5)
                 .color(Color.RED));
-        }
 
         mMap.setMyLocationEnabled(true);
         locationListener = new LocationListener() {
@@ -133,14 +135,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateLocation(Location location)
     {
         LatLng updatedLocation = new LatLng(location.getLatitude(),location.getLongitude());
-        if(recording){
-//            mMap.addMarker(new MarkerOptions().position(updatedLocation).title("New Location"));
-            coordinates.add(updatedLocation);
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(updatedLocation));
-            Log.i(MY_TAG, "Latitude: " + location.getLatitude() + " Longitude: " + location.getLongitude());
-            line.setPoints(coordinates);
-        }
-        Log.i(MY_TAG, "updateLocation");
+//        mMap.addMarker(new MarkerOptions().position(updatedLocation).title("New Location"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(updatedLocation));
+        coordinates.add(updatedLocation);
+        line.setPoints(coordinates);
+        Log.i(MY_TAG, "updateLocation   Latitude: " + location.getLatitude() + " Longitude: " + location.getLongitude());
     }
 
     public void startRecording(View view){
@@ -150,9 +149,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void stopRecording(View view){
         recording  = false;
+        line.setPoints(coordinates);
         Log.i(MY_TAG, "stopRecording");
         for(int i = 0; i < coordinates.size(); i++){
-            Log.i(MY_TAG, "\tLat: " + coordinates.get(i).latitude + "\tLong: " + coordinates.get(i).longitude);
+            Log.i(MY_TAG, "Lat: " + coordinates.get(i).longitude + " Lat: " + coordinates.get(i).longitude);
         }
     }
 
