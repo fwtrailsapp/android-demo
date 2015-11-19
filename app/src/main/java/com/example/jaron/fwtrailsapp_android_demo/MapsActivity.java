@@ -23,7 +23,6 @@ import com.google.maps.android.kml.KmlLayer;
 import com.google.android.gms.location.LocationListener;
 
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
